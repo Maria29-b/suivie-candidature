@@ -2,12 +2,11 @@ package com.suivi.suivi_candidature.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.ArrayList;
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "Entreprise")
-@Data
 public class Entreprise {
 
     @Id
@@ -26,10 +25,9 @@ public class Entreprise {
     @Column(name = "contact", nullable = false, length = 50)
     private String contact;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_offre", referencedColumnName = "id_offre")
-    private Offre offre;
+    @OneToMany(mappedBy = "entreprise")
+    private List<Offre> offres;
 
     @OneToMany(mappedBy = "entreprise")
-    private List<Candidater> candidaters = new ArrayList<>();
+    private List<Postuler> postulations;
 }
