@@ -107,6 +107,7 @@ export default function NewApplication() {
                 defaultValue="PENDING"
               >
                 <option value="PENDING">En attente</option>
+                <option value="IN_PROCESS">En cours</option>
                 <option value="ACCEPTED">Accepté</option>
                 <option value="REJECTED">Refusé</option>
               </select>
