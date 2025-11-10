@@ -10,6 +10,7 @@ import java.time.LocalDate;
 public class Motivation {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id_motivation", length = 50)
     private String idMotivation;
 

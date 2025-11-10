@@ -10,6 +10,7 @@ import java.util.List;
 public class Candidat {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id_user", length = 50)
     private String idUser;
 

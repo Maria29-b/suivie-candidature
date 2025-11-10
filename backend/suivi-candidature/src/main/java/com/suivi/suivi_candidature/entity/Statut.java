@@ -11,6 +11,7 @@ import java.util.List;
 public class Statut {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id_statut", length = 50)
     private String idStatut;
 

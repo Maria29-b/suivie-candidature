@@ -9,6 +9,7 @@ import lombok.Data;
 public class Offre {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id_offre", length = 50)
     private String idOffre;
 

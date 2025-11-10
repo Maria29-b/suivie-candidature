@@ -11,14 +11,17 @@ import java.time.LocalDate;
 public class Postuler {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "Id_ent", length = 50)
     private String idEnt;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id_user", length = 50)
     private String idUser;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id_statut", length = 50)
     private String idStatut;
 

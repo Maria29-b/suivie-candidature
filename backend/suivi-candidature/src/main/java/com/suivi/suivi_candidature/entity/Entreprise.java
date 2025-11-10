@@ -10,6 +10,7 @@ import java.util.List;
 public class Entreprise {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "Id_ent", length = 50)
     private String idEnt;
 
