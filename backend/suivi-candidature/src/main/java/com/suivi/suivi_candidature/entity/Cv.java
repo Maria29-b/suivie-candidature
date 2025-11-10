@@ -3,12 +3,10 @@ package com.suivi.suivi_candidature.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
+@Data
 @Entity
 @Table(name = "cv")
-@Data
 public class Cv {
 
     @Id
@@ -18,6 +16,7 @@ public class Cv {
     @Column(name = "date_creation")
     private LocalDate dateCreation;
 
-    @OneToMany(mappedBy = "cv")
-    private List<User> users = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "id_user", nullable = false)
+    private Candidat candidat;
 }
