@@ -498,3 +498,43 @@ hr {
 .application-card, .stat-card {
   animation: fadeIn 0.3s ease-out;
 }
+
+/* Footer Styles */
+footer {
+  background-color: white;
+  border-top: 1px solid #e2e8f0;
+}
+
+footer a {
+  transition: color 0.2s ease-in-out;
+}
+
+/* Layout pour le footer fixe */
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.mt-auto {
+  margin-top: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  footer .flex-col {
+    text-align: center;
+  }
+  
+  footer .flex-col > div {
+    margin-bottom: 1rem;
+  }
+  
+  footer .flex.gap-4 {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+}
