@@ -1,11 +1,11 @@
 export default function StatCard({ title, value, dotColor }) {
   return (
-    <div className="rounded-xl border bg-white p-5 flex items-center justify-between">
-      <div>
-        <p className="text-sm text-gray-500">{title}</p>
-        <p className="text-2xl font-semibold mt-1">{value}</p>
+    <div className="stat-card">
+      <h3>{title}</h3>
+      <div className="flex items-center">
+        {dotColor && <span className={`dot ${dotColor}`}></span>}
+        <span className="value">{value}</span>
       </div>
-      {dotColor && <span className={`h-3 w-3 rounded-full ${dotColor}`} />}
     </div>
   );
 }
