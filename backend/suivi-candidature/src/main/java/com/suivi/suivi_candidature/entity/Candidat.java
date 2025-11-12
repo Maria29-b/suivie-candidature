@@ -1,10 +1,14 @@
 package com.suivi.suivi_candidature.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
+import lombok.AllArgsConstructor;
 import java.util.List;
 
 @Data
+@Builder
+@AllArgsConstructor
 @Entity
 @Table(name = "candidat")
 public class Candidat {
@@ -22,9 +26,7 @@ public class Candidat {
 
     @Column(name = "password", nullable = false, length = 255)
     private String password;
-
-    @Column(name = "role", nullable = false, length = 20)
-    private String role = "CANDIDAT";
+    
 
     @OneToMany(mappedBy = "candidat")
     private List<Motivation> motivations;
