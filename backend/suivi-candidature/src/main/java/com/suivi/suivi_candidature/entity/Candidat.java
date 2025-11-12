@@ -17,6 +17,15 @@ public class Candidat {
     @Column(name = "nom_user", nullable = false, length = 50)
     private String nomUser;
 
+    @Column(name = "pseudo", nullable = false, unique = true, length = 50)
+    private String pseudo;
+
+    @Column(name = "password", nullable = false, length = 255)
+    private String password;
+
+    @Column(name = "role", nullable = false, length = 20)
+    private String role = "CANDIDAT";
+
     @OneToMany(mappedBy = "candidat")
     private List<Motivation> motivations;
 
