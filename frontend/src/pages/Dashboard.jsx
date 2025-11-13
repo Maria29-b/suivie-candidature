@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Briefcase } from 'lucide-react';
 import { Link } from "react-router-dom";
 import StatCard from "../components/StatCard";
 import ApplicationCard from "../components/ApplicationCard";
@@ -23,6 +24,13 @@ export default function Dashboard() {
     console.log('Application mise à jour:', updatedApp);
   };
 
+  // Fonction pour supprimer une candidature
+  const handleDeleteApplication = (appId) => {
+    setApplications(prevApps => prevApps.filter(app => app.id !== appId));
+    console.log('Application supprimée:', appId);
+  };
+
+
   // Calculer les statistiques dynamiquement
   const total = applications.length;
   const pending = applications.filter(x => x.status === "PENDING").length;
@@ -36,7 +44,9 @@ export default function Dashboard() {
       <div className="bg-white border-b">
         <div className="mx-auto max-w-6xl px-4 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-lg bg-rose-100 flex items-center justify-center">📂</div>
+            <div className="logo-box">
+              <Briefcase className="logo-icon" />
+            </div>
             <h1 className="text-xl font-semibold">TrackMyJob</h1>
           </div>
           <Link 
@@ -74,6 +84,7 @@ export default function Dashboard() {
                 key={item.id} 
                 item={item} 
                 onUpdate={handleUpdateApplication}
+                onDelete={handleDeleteApplication}
               />
             ))}
           </div>
@@ -85,7 +96,9 @@ export default function Dashboard() {
         <div className="mx-auto max-w-6xl px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-3 mb-4 md:mb-0">
-              <div className="h-6 w-6 rounded-lg bg-rose-100 flex items-center justify-center text-sm">📂</div>
+              <div className="logo-box">
+                <Briefcase className="logo-icon" />
+              </div>
               <span className="font-semibold text-gray-800">TrackMyJob</span>
             </div>
             
