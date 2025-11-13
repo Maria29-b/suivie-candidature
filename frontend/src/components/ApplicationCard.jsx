@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Edit } from 'lucide-react';
+import { Edit, Trash2, Eye } from 'lucide-react';
 import EditCandidatureModal from './EditCandidatureModal';
 
-export default function ApplicationCard({ item, onUpdate }) {
+export default function ApplicationCard({ item, onUpdate, onDelete }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const getStatusClass = (status) => {
@@ -67,6 +67,15 @@ export default function ApplicationCard({ item, onUpdate }) {
     }
   };
 
+  // Gérer la suppression
+  const handleDeleteClick = () => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette candidature ?')) {
+      if (onDelete) {
+        onDelete(item.id);
+      }
+    }
+  };
+
   return (
     <>
       <div className="application-card">
@@ -77,12 +86,25 @@ export default function ApplicationCard({ item, onUpdate }) {
           <span className={`status ${getStatusClass(item.status)}`}>
             {getStatusText(item.status)}
           </span>
-          <div className="card-actions">
-            {item.cvUrl && item.cvUrl !== "#" && (
-              <a href={item.cvUrl} className="text-sm text-rose-600 hover:underline">
-                Voir CV
-              </a>
-            )}
+
+          <div className="card-actions-vertical">
+            {/* Afficher toujours le bouton Voir CV */}
+            <a 
+              href={item.cvUrl || "#"} 
+              className="view-cv-btn"
+              onClick={(e) => {
+                // Si pas de CV, empêcher la navigation et afficher un message
+                if (!item.cvUrl || item.cvUrl === "#") {
+                  e.preventDefault();
+                  alert("Aucun CV disponible pour cette candidature");
+                }
+              }}
+            >    
+              <Eye size={14} />
+              Voir CV
+            </a>
+
+
             <button 
               onClick={() => setIsEditModalOpen(true)}
               className="edit-btn"
@@ -90,6 +112,15 @@ export default function ApplicationCard({ item, onUpdate }) {
             >
               <Edit size={16} />
               Modifier
+            </button>
+
+            <button 
+              onClick={handleDeleteClick}
+              className="delete-btn"
+              title="Supprimer la candidature"
+            >
+              <Trash2 size={14} />
+              Supprimer
             </button>
           </div>
         </div>

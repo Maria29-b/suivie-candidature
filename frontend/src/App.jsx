@@ -1,10 +1,18 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import reactLogo from './assets/react.svg';
+import viteLogo from '/vite.svg';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Pages et context
+import LoginPage from './pages/LoginPage';
+import Dashboard from './pages/Dashboard';
+import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './context/AuthContext';
+
+function DefaultPage() {
+  // C'est ton ancien code, encapsulé dans une page "par défaut"
+  const [count, setCount] = useState(0);
 
   return (
     <>
@@ -29,7 +37,30 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
     </>
-  )
+  );
 }
 
-export default App
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Route login */}
+          <Route path="/login" element={<LoginPage />} />
+
+          {/* Route dashboard protégée */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+
+          {/* Route par défaut / page d'accueil */}
+          <Route path="/" element={<DefaultPage />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
+}
+
+export default App;

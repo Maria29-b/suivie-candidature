@@ -1,25 +1,21 @@
+// src/pages/LoginPage.jsx
 import { useState } from 'react';
 import { Eye, EyeOff, Briefcase } from 'lucide-react';
-import './LoginPage.css'; // Importez le fichier CSS
+import './LoginPage.css';
+import { useAuth } from '../context/AuthContext';
+import { login } from '../services/authService';
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
+    pseudo: '',
     password: ''
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    setTimeout(() => {
-      console.log('Connexion avec:', formData);
-      setIsLoading(false);
-      alert('Connexion réussie ! Redirection vers le dashboard...');
-    }, 1500);
-  };
+  const { loginUser } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -28,10 +24,29 @@ export default function LoginPage() {
     });
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      // Appel au backend
+      const data = await login(formData.pseudo, formData.password);
+      
+      // Stockage du token
+      loginUser(data.token);
+
+      // Redirection vers dashboard
+      navigate('/dashboard');
+    } catch (err) {
+      alert(err.message || 'Erreur lors de la connexion');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="login-container">
       <div className="login-content">
-        {/* Logo et titre */}
         <div className="login-header">
           <div className="logo-box">
             <Briefcase className="logo-icon" />
@@ -40,19 +55,18 @@ export default function LoginPage() {
           <p className="login-subtitle">Connectez-vous à votre compte</p>
         </div>
 
-        {/* Formulaire de connexion */}
         <div className="login-card">
           <div className="form-container">
-            {/* Pseudo*/}
+            {/* Pseudo */}
             <div className="form-group">
-              <label htmlFor="text" className="form-label">
+              <label htmlFor="pseudo" className="form-label">
                 Pseudo
               </label>
               <input
                 type="text"
                 id="pseudo"
                 name="pseudo"
-                value={formData.text}
+                value={formData.pseudo}   
                 onChange={handleChange}
                 required
                 className="form-input"
@@ -94,9 +108,25 @@ export default function LoginPage() {
             >
               {isLoading ? (
                 <span className="loading-content">
-                  <svg className="spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="spinner-circle" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="spinner-path" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="spinner"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="spinner-circle"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="spinner-path"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Connexion...
                 </span>
@@ -105,14 +135,13 @@ export default function LoginPage() {
               )}
             </button>
           </div>
-
         </div>
 
         {/* Footer */}
         <p className="footer-text">
           En vous connectant, vous acceptez nos{' '}
-          <button className="footer-link">Conditions d'utilisation</button>
-          {' '}et notre{' '}
+          <button className="footer-link">Conditions d'utilisation</button>{' '}
+          et notre{' '}
           <button className="footer-link">Politique de confidentialité</button>
         </p>
       </div>
