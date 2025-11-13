@@ -24,8 +24,9 @@ public class OffreController {
     public ResponseEntity<Offre> getById(@PathVariable String id) {
         return ResponseEntity.ok(offreService.findById(id));
     }
-
-    @PostMapping
+    
+    // 
+    @PostMapping("/")
     public ResponseEntity<Offre> create(@RequestBody Offre offre) {
         return ResponseEntity.ok(offreService.create(offre));
     }
