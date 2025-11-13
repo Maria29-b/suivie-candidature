@@ -3,10 +3,12 @@ package com.suivi.suivi_candidature.entity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.util.List;
 
 @Data
+@NoArgsConstructor 
 @Builder
 @AllArgsConstructor
 @Entity
