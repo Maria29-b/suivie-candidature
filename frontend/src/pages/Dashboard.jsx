@@ -50,24 +50,33 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <div className="flex-1">
-        {/* Stats */}
-        <div className="mx-auto max-w-6xl px-4 py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <StatCard title="Total" value={total} />
-          <StatCard title="En attente" value={pending} dotColor="bg-blue-500" />
-          <StatCard title="En cours" value={inProcess} dotColor="bg-yellow-500" />
-          <StatCard title="Accepté" value={accepted} dotColor="bg-green-500" />
-          <StatCard title="Refusé" value={rejected} dotColor="bg-red-500" />
+        {/* Stats compactes */}
+        <div className="mx-auto max-w-6xl px-4 py-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <StatCard title="Total" value={total} />
+            <StatCard title="En attente" value={pending} dotColor="bg-blue-500" />
+            <StatCard title="En cours" value={inProcess} dotColor="bg-yellow-500" />
+            <StatCard title="Accepté" value={accepted} dotColor="bg-green-500" />
+            <StatCard title="Refusé" value={rejected} dotColor="bg-red-500" />
+          </div>
         </div>
 
-        {/* Grid candidatures */}
-        <div className="mx-auto max-w-6xl px-4 pb-10 grid grid-cols-1 md:grid-cols-2 gap-5">
-          {applications.map(item => 
-            <ApplicationCard 
-              key={item.id} 
-              item={item}
-              onUpdate={handleUpdateApplication}
-            />
-          )}
+        {/* Séparateur comme dans l'image 1 */}
+        <div className="mx-auto max-w-6xl px-4">
+          <hr className="border-t border-gray-300 my-6" />
+        </div>
+
+        {/* Grid candidatures - PARTIE MANQUANTE AJOUTÉE */}
+        <div className="mx-auto max-w-6xl px-4 pb-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {applications.map(item => (
+              <ApplicationCard 
+                key={item.id} 
+                item={item} 
+                onUpdate={handleUpdateApplication}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
