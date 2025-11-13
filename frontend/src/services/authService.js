@@ -9,8 +9,22 @@ export const login = async (pseudo, password) => {
   });
 
   if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.message || "Erreur lors de la connexion");
+    // Backend may return plain text (e.g. "Mot de passe incorrect") or JSON.
+    // Try JSON first, otherwise fall back to text to avoid JSON parse errors.
+    const contentType = response.headers.get('content-type') || '';
+    let errMsg = 'Erreur lors de la connexion';
+    try {
+      if (contentType.includes('application/json')) {
+        const err = await response.json();
+        errMsg = err?.message || JSON.stringify(err) || errMsg;
+      } else {
+        const text = await response.text();
+        errMsg = text || errMsg;
+      }
+    } catch (e) {
+      
+    }
+    throw new Error(errMsg);
   }
 
   return response.json(); // { token: "..." }

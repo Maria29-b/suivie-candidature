@@ -10,7 +10,7 @@ import { AuthProvider } from "./context/AuthContext";
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage />},
-  { path: "/", element: <Dashboard /> },
+  { path: "/dashboard", element: <Dashboard /> },
   { path: "/add-application", element: <NewApplication /> },
 ]);
 
