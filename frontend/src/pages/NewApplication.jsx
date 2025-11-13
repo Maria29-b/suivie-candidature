@@ -8,7 +8,7 @@ const schema = yup.object({
   title: yup.string().required("Champ requis"),
   description: yup.string().nullable(),
   applied_date: yup.string().required("Champ requis"),
-  status: yup.string().oneOf(["PENDING","ACCEPTED","REJECTED","IN PROCESS"]).required(),
+  status: yup.string().oneOf(["PENDING","ACCEPTED","REJECTED","IN_PROCESS"]).required(),
   cv: yup.mixed().nullable(),
   cover: yup.mixed().nullable(),
 });
@@ -17,13 +17,10 @@ export default function NewApplication() {
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
-    defaultValues: {
-      status: "PENDING",
-    }
+    defaultValues: { status: "PENDING" }
   });
 
   const onSubmit = async (values) => {
-    // Exemple côté front : préparer FormData pour upload
     const fd = new FormData();
     fd.append("company", values.company);
     fd.append("title", values.title);
@@ -33,15 +30,24 @@ export default function NewApplication() {
     if (values.cv?.[0]) fd.append("cv", values.cv[0]);
     if (values.cover?.[0]) fd.append("cover", values.cover[0]);
 
-    // TODO: envoyer à votre backend Django (endpoint POST /api/applications/)
-    // await api.post("applications/", fd, { headers: { "Content-Type": "multipart/form-data" } });
+    try {
+      const response = await fetch("http://localhost:8080/api/applications", {
+        method: "POST",
+        body: fd,
+      });
 
-    navigate("/"); // retour au dashboard après succès
+      if (!response.ok) throw new Error("Erreur lors de la création");
+
+      const data = await response.json();
+      console.log("Candidature créée :", data);
+      navigate("/"); // retour au dashboard
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top bar light */}
       <div className="bg-white border-b">
         <div className="mx-auto max-w-3xl px-4 py-4">
           <Link to="/" className="text-sm text-gray-600 hover:underline">← Retour</Link>
@@ -54,7 +60,6 @@ export default function NewApplication() {
           <p className="text-gray-600 mt-1">Remplissez les informations de votre candidature</p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6" encType="multipart/form-data">
-            {/* Entreprise */}
             <div>
               <label className="block text-sm font-medium">Entreprise *</label>
               <input
@@ -65,7 +70,6 @@ export default function NewApplication() {
               {errors.company && <p className="text-sm text-red-600 mt-1">{errors.company.message}</p>}
             </div>
 
-            {/* Titre du poste */}
             <div>
               <label className="block text-sm font-medium">Titre du poste *</label>
               <input
@@ -76,7 +80,6 @@ export default function NewApplication() {
               {errors.title && <p className="text-sm text-red-600 mt-1">{errors.title.message}</p>}
             </div>
 
-            {/* Description */}
             <div>
               <label className="block text-sm font-medium">Description du poste</label>
               <textarea
@@ -87,7 +90,6 @@ export default function NewApplication() {
               />
             </div>
 
-            {/* Date */}
             <div>
               <label className="block text-sm font-medium">Date de candidature *</label>
               <input
@@ -98,7 +100,6 @@ export default function NewApplication() {
               {errors.applied_date && <p className="text-sm text-red-600 mt-1">{errors.applied_date.message}</p>}
             </div>
 
-            {/* Statut */}
             <div>
               <label className="block text-sm font-medium">Statut</label>
               <select
@@ -113,7 +114,6 @@ export default function NewApplication() {
               </select>
             </div>
 
-            {/* Fichiers */}
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium">CV</label>
@@ -127,7 +127,6 @@ export default function NewApplication() {
               </div>
             </div>
 
-            {/* Actions */}
             <div className="flex items-center justify-end gap-4 pt-2">
               <Link to="/" className="px-4 py-2 rounded-lg border hover:bg-gray-50">
                 Annuler
@@ -142,6 +141,6 @@ export default function NewApplication() {
           </form>
         </div>
       </div>
-    </div>
-  );
+    </div>
+  );
 }

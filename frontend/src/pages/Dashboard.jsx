@@ -1,19 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import StatCard from "../components/StatCard";
 import ApplicationCard from "../components/ApplicationCard";
 
-const mockInitial = [
-  { id: 1, title: "Développeur Full Stack", company: "Tech Innovate", date: "15/03/2024", status: "PENDING", cvName: "CV_Developpeur_FullStack.pdf", cvUrl: "#", },
-  { id: 2, title: "Product Manager", company: "Digital Solutions", date: "10/03/2024", status: "ACCEPTED", cvName: "CV_Product_Manager.pdf", cvUrl: "#", },
-  { id: 3, title: "UX Designer", company: "Creative Studio", date: "05/03/2024", status: "REJECTED", cvName: "CV_UX_Designer.pdf", cvUrl: "#", },
-];
-
 export default function Dashboard() {
-  // Utiliser useState pour gérer les candidatures
-  const [applications, setApplications] = useState(mockInitial);
+  const [applications, setApplications] = useState([]);
 
-  // Fonction pour mettre à jour une candidature
+  // 🔹 Charger les candidatures depuis le backend
+  useEffect(() => {
+    fetch("http://localhost:8080/api/applications")
+      .then(res => res.json())
+      .then(data => setApplications(data))
+      .catch(err => console.error(err));
+  }, []);
+
+  // 🔹 Calculer les statistiques dynamiquement
+  const total = applications.length;
+  const pending = applications.filter(x => x.status === "PENDING").length;
+  const inProcess = applications.filter(x => x.status === "IN_PROCESS").length;
+  const accepted = applications.filter(x => x.status === "ACCEPTED").length;
+  const rejected = applications.filter(x => x.status === "REJECTED").length;
+
+  // 🔹 Mettre à jour une candidature
   const handleUpdateApplication = (updatedApp) => {
     setApplications(prevApps =>
       prevApps.map(app => 
@@ -22,13 +30,6 @@ export default function Dashboard() {
     );
     console.log('Application mise à jour:', updatedApp);
   };
-
-  // Calculer les statistiques dynamiquement
-  const total = applications.length;
-  const pending = applications.filter(x => x.status === "PENDING").length;
-  const inProcess = applications.filter(x => x.status === "IN_PROCESS").length;
-  const accepted = applications.filter(x => x.status === "ACCEPTED").length;
-  const rejected = applications.filter(x => x.status === "REJECTED").length;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -40,7 +41,7 @@ export default function Dashboard() {
             <h1 className="text-xl font-semibold">TrackMyJob</h1>
           </div>
           <Link 
-            to="/add-application" 
+            to="/new-application" 
             className="px-4 py-2 rounded-lg bg-rose-600 text-white hover:bg-rose-700"
           >
             + Nouvelle candidature
