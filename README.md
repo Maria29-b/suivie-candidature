@@ -1,18 +1,53 @@
-TrackMyJob — Application de Suivi de Candidatures
+TrackMyJob - Application de Suivi de Candidatures
+TrackMyJob est une application web complète développée avec React en frontend et Java Spring Boot en backend, et PostgreSQL pour la base de données permettant aux chercheurs d'emploi de suivre efficacement leurs candidatures. Centralisez toutes vos offres, CV, lettres de motivation et états d'avancement en un seul endroit.
 
-TrackMyJob est une application web développée avec React et JAVA permettant aux utilisateurs de suivre facilement leurs candidatures d’emploi.
-L’objectif est de centraliser toutes les offres auxquels on a postulé, les CV envoyés et l’état d’avancement des candidatures (En attente, En cours(quand un entretien a été programmé), Accepté, Refusé).
+✨ Fonctionnalités
+📊 Tableau de Bord
+Vue d'ensemble de toutes vos candidatures
 
--Fonctionnalités principales:
+Statistiques rapides sur l'état de vos démarches
 
-.Tableau de bord listant toutes les candidatures
+Interface intuitive et organisée
 
-.Fiche détaillée de chaque poste (titre, entreprise, date, statut, CV joint et lettre de motivation)
+📝 Gestion des Candidatures
+Ajout simplifié via formulaire intuitif
 
-.Ajout d’une nouvelle candidature via un formulaire à remplir
+Fiche détaillée pour chaque poste :
 
-.Suivi du statut (En attente, En cours, Accepté, Refusé)
+Titre du poste et entreprise
 
-. Un Rappel via Google Meet et Teams pour les dates d'entretien et l'heure fixé
+Date de candidature
+
+Statut de suivi
+
+CV et lettre de motivation joints
 
 
+🔄 Suivi des Statuts
+En attente - Candidature envoyée
+
+En cours - Entretien programmé
+
+Accepté - Offre obtenue 🎉
+
+Refusé - Candidature non retenue
+
+
+🛠️ Architecture Technique
+Frontend
+React - Framework principal
+
+Vite - Build tool et environnement de développement
+
+CSS moderne - Interface utilisateur responsive
+
+Components modulaires - Code maintenable et réutilisable
+
+Backend
+Java Spring Boot - API REST robuste et sécurisée
+
+Architecture MVC - Structure claire et organisée
+
+Gestion des données - Persistence et intégrité
+
+Base de données en PostgresQL
