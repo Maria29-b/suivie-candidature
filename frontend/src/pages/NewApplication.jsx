@@ -1,4 +1,6 @@
 import { useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext"; // pour récupérer l'idUser
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -15,34 +17,61 @@ const schema = yup.object({
 
 export default function NewApplication() {
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+  const { user } = useAuth(); // récupère l'utilisateur courant, contient idUser et token
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
     defaultValues: { status: "PENDING" }
   });
 
   const onSubmit = async (values) => {
-    const fd = new FormData();
-    fd.append("company", values.company);
-    fd.append("title", values.title);
-    fd.append("description", values.description || "");
-    fd.append("applied_date", values.applied_date);
-    fd.append("status", values.status);
-    if (values.cv?.[0]) fd.append("cv", values.cv[0]);
-    if (values.cover?.[0]) fd.append("cover", values.cover[0]);
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    // Build JSON payload avec idUser
+    const payload = {
+      company: values.company,
+      title: values.title,
+      description: values.description || "",
+      appliedDate: values.applied_date,
+      status: values.status,
+      idUser: user?.idUser // ajouté pour respecter la FK
+    };
 
     try {
+      const token = localStorage.getItem("token"); // ou user?.token si stocké dans le contexte
       const response = await fetch("http://localhost:8080/api/applications", {
         method: "POST",
-        body: fd,
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error("Erreur lors de la création");
+      if (!response.ok) {
+        const ct = response.headers.get("content-type") || "";
+        let errMsg = "Erreur lors de la création";
+        try {
+          if (ct.includes("application/json")) {
+            const err = await response.json();
+            errMsg = err?.message || JSON.stringify(err) || errMsg;
+          } else {
+            errMsg = await response.text();
+          }
+        } catch (e) {}
+        throw new Error(errMsg);
+      }
 
       const data = await response.json();
       console.log("Candidature créée :", data);
-      navigate("/"); // retour au dashboard
+      navigate("/dashboard"); // retour au dashboard
     } catch (err) {
       console.error(err);
+      setSubmitError(err.message || 'Erreur lors de la création');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -50,7 +79,7 @@ export default function NewApplication() {
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white border-b">
         <div className="mx-auto max-w-3xl px-4 py-4">
-          <Link to="/" className="text-sm text-gray-600 hover:underline">← Retour</Link>
+          <Link to="/dashboard" className="text-sm text-gray-600 hover:underline">← Retour</Link>
         </div>
       </div>
 
@@ -60,6 +89,7 @@ export default function NewApplication() {
           <p className="text-gray-600 mt-1">Remplissez les informations de votre candidature</p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6" encType="multipart/form-data">
+            {/* Le reste du formulaire reste inchangé */}
             <div>
               <label className="block text-sm font-medium">Entreprise *</label>
               <input
@@ -128,16 +158,20 @@ export default function NewApplication() {
             </div>
 
             <div className="flex items-center justify-end gap-4 pt-2">
-              <Link to="/" className="px-4 py-2 rounded-lg border hover:bg-gray-50">
+              <Link to="/dashboard" className="px-4 py-2 rounded-lg border hover:bg-gray-50">
                 Annuler
               </Link>
               <button
                 type="submit"
-                className="px-5 py-2.5 rounded-lg bg-rose-600 text-white hover:bg-rose-700"
+                disabled={isSubmitting}
+                className={`px-5 py-2.5 rounded-lg bg-rose-600 text-white hover:bg-rose-700 ${isSubmitting ? 'opacity-60 cursor-not-allowed' : ''}`}
               >
-                Ajouter la candidature
+                {isSubmitting ? 'Enregistrement...' : 'Ajouter la candidature'}
               </button>
             </div>
+            {submitError && (
+              <div className="text-red-600 text-sm pt-2">{submitError}</div>
+            )}
           </form>
         </div>
       </div>

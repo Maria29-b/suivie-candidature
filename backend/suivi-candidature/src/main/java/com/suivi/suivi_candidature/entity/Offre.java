@@ -16,7 +16,7 @@ public class Offre {
     @Column(name = "titre_poste", nullable = false, length = 50)
     private String titrePoste;
 
-    @Column(name = "description", nullable = false, length = 50)
+    @Column(name = "description", nullable = false, length = 500)
     private String description;
 
     @Column(name = "lien_source", nullable = false, length = 50)

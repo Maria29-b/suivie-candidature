@@ -12,4 +12,6 @@ import lombok.Data;
 public class AuthResponse {
     private String token;
     private String pseudo;
+    // ID du candidat (optionnel) renvoyé pour le frontend
+    private String idUser;
 }

@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 @EnableWebSecurity
@@ -25,10 +26,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
+            .cors(cors -> {})                       // Active CORS (utilisera ton CorsConfig)
+            .csrf(csrf -> csrf.disable())           // Désactive CSRF (nécessaire pour frontend séparé)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll() // Endpoints d'authentification publics
-                .requestMatchers("/api/**").authenticated()   // API protégée
+                // Autoriser toutes les requêtes preflight (OPTIONS) AVANT TOUT
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                // Endpoints d'auth publics
+                .requestMatchers("/api/auth/**").permitAll()
+
+                // API protégée
+                .requestMatchers("/api/**").authenticated()
+
+                // Tout le reste permis (CSS, JS, etc.)
                 .anyRequest().permitAll()
             )
             .sessionManagement(session -> session

@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EntrepriseRepository extends JpaRepository<Entreprise, String> {
+
+	java.util.Optional<Entreprise> findByNomEnt(String nomEnt);
+
 }

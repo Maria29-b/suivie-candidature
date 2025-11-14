@@ -6,13 +6,37 @@ import ApplicationCard from "../components/ApplicationCard";
 
 export default function Dashboard() {
   const [applications, setApplications] = useState([]);
+  const [loadError, setLoadError] = useState(null);
 
   // 🔹 Charger les candidatures depuis le backend
   useEffect(() => {
     fetch("http://localhost:8080/api/applications")
       .then(res => res.json())
-      .then(data => setApplications(data))
-      .catch(err => console.error(err));
+      .then(data => {
+        // Défensive : le backend peut retourner :
+        // - un tableau direct de candidatures -> data = [ ... ]
+        // - un objet paginé -> data = { content: [...], totalElements: 10 }
+        // - une erreur ou du HTML (si endpoint manquant) -> data = {...} ou string
+        console.log('applications payload:', data);
+        let apps = [];
+        if (Array.isArray(data)) {
+          apps = data;
+        } else if (data && Array.isArray(data.content)) {
+          apps = data.content;
+        } else if (data && Array.isArray(data.items)) {
+          // fallback for some APIs
+          apps = data.items;
+        } else {
+          // Received something unexpected
+          setLoadError('Réponse inattendue du serveur pour les candidatures');
+          console.warn('Unexpected applications payload:', data);
+        }
+        setApplications(apps);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoadError('Erreur lors du chargement des candidatures');
+      });
   }, []);
 
   // 🔹 Calculer les statistiques dynamiquement
@@ -51,7 +75,7 @@ export default function Dashboard() {
             <h1 className="text-xl font-semibold">TrackMyJob</h1>
           </div>
           <Link 
-            to="/new-application" 
+            to="/add-application" 
             className="px-4 py-2 rounded-lg bg-rose-600 text-white hover:bg-rose-700"
           >
             + Nouvelle candidature
@@ -80,14 +104,18 @@ export default function Dashboard() {
         {/* Grid candidatures - PARTIE MANQUANTE AJOUTÉE */}
         <div className="mx-auto max-w-6xl px-4 pb-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {applications.map(item => (
+            {loadError ? (
+              <div className="col-span-1 md:col-span-2 text-red-600">{loadError}. Voir console pour plus de détails.</div>
+            ) : (
+              applications.map(item => (
               <ApplicationCard 
                 key={item.id} 
                 item={item} 
                 onUpdate={handleUpdateApplication}
                 onDelete={handleDeleteApplication}
               />
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>
