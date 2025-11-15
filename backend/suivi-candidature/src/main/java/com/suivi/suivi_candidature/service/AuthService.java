@@ -35,47 +35,34 @@ public class AuthService {
 
         candidatRepository.save(candidat);
 
-        // Générer le token JWT avec l'ID du candidat
-        String jwtToken = jwtService.generateToken(candidat.getIdUser().toString());
+        // Générer le token JWT
+        String jwtToken = jwtService.generateToken(candidat.getPseudo());
 
         return AuthResponse.builder()
                 .token(jwtToken)
                 .pseudo(candidat.getPseudo())
-                .idUser(candidat.getIdUser().toString()) // Ajouté pour le frontend
                 .build();
     }
 
     /**
      * Authentifie un utilisateur existant et renvoie un token JWT.
-     * Crée le candidat automatiquement si il n’existe pas.
      */
     public AuthResponse authenticate(AuthRequest request) {
-        // Vérifier si le candidat existe
+        // Récupérer l'utilisateur par pseudo
         Candidat candidat = candidatRepository.findByPseudo(request.getPseudo())
-                .orElseGet(() -> {
-                    // Si pas trouvé, créer automatiquement
-                    Candidat newCandidat = Candidat.builder()
-                            .pseudo(request.getPseudo())
-                            .nomUser(request.getNomUser() != null ? request.getNomUser() : request.getPseudo())
-                            .password(passwordEncoder.encode(request.getPassword()))
-                            .build();
-                    candidatRepository.save(newCandidat);
-                    return newCandidat;
-                });
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
-        // Vérifier le mot de passe si l'utilisateur existait déjà
-        if (candidat.getPassword() != null 
-                && !passwordEncoder.matches(request.getPassword(), candidat.getPassword())) {
+        // Vérifier le mot de passe
+        if (!passwordEncoder.matches(request.getPassword(), candidat.getPassword())) {
             throw new RuntimeException("Mot de passe incorrect");
         }
 
-        // Générer le token JWT avec l'ID du candidat
-        String jwtToken = jwtService.generateToken(candidat.getIdUser().toString());
+        // Générer le token JWT
+        String jwtToken = jwtService.generateToken(candidat.getPseudo());
 
         return AuthResponse.builder()
                 .token(jwtToken)
                 .pseudo(candidat.getPseudo())
-                .idUser(candidat.getIdUser().toString()) // utile pour le frontend
                 .build();
     }
 }

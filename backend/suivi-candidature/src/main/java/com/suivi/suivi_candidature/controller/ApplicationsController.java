@@ -3,6 +3,7 @@ package com.suivi.suivi_candidature.controller;
 import com.suivi.suivi_candidature.dto.CreateApplicationDto;
 import com.suivi.suivi_candidature.entity.*;
 import com.suivi.suivi_candidature.repository.*;
+import com.suivi.suivi_candidature.service.PostulerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -19,7 +20,7 @@ public class ApplicationsController {
     private final EntrepriseRepository entrepriseRepository;
     private final OffreRepository offreRepository;
     private final StatutRepository statutRepository;
-    private final PostulerRepository postulerRepository;
+    private final PostulerService postulerService;
     private final CandidatRepository candidatRepository;
 
     /**
@@ -77,7 +78,7 @@ public class ApplicationsController {
             p.setDateCandidature(LocalDate.now());
         }
 
-        Postuler saved = postulerRepository.save(p);
+        Postuler saved = postulerService.create(p);
 
         return ResponseEntity.ok(saved);
     }
